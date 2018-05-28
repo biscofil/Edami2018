@@ -52,15 +52,15 @@ Durante la stesura del progetto è nata la volontà nel sottoscritto di concentr
 Tra le diverse proposte sono stati scelti i tre seguenti dataset, di cui riportiamo la data di costruzione del campione:
 
 \begin{itemize}
-  \item 1) La qualità della vita delle province italiane: 2003/2004
-  \item 2) Laureati e lavoro: 2015
-  \item 3) Regioni Europee: 2016
+  \item La qualità della vita delle province italiane: 2003/2004
+  \item Laureati e lavoro: 2015
+  \item Regioni Europee: 2016
 \end{itemize}
 
-Essendo di nostro interesse confrontare il grado di disoccupazione in Italia con la disoccupazione post-laurea saremmo costretti a confrontare due dataset costruiti a dodici anni di distanza. Ciò non è e accettabile, quindi provvediamo ad includere un quarto dataset messo a disposizione dall'ISTAT dal quale possiamo estrarre i dati relativi al 2015.
+Essendo di nostro interesse confrontare il grado di disoccupazione in Italia con la disoccupazione post-laurea saremmo costretti a confrontare due dataset costruiti a dodici anni di distanza. Ciò non è accettabile, quindi provvediamo ad includere un quarto dataset messo a disposizione dall'ISTAT dal quale possiamo estrarre i dati relativi al 2015.
 
 \begin{itemize}
-  \item 4) Tasso di disoccupazione: 2015
+  \item Tasso di disoccupazione: 2015
 \end{itemize}
 
 Utilizzeremo il primo dataset (2003) solo per confronti temporali con i dati aggiornati (2015).
@@ -124,6 +124,8 @@ gp <- list(guide.label="Percentuale studenti\ndisoccupati dopo \nun anno", low="
 mapIT(DisOcc.perc, Regione, data=occupazione.stud.entro.anno, graphPar = gp)
 ```
 
+Si nota un forte squilibrio tra la regione settentrionale e quella meridionale del Paese con un valore prossimo al 50% (un disoccupato ogni due persone) per le regioni Basilicata e Molise. 
+
 Una volta analizzata la disoccupazione ad un anno dalla laurea, ci chiediamo se essa sia legata al livello di disoccupazione della regione. 
 
 ```{r fig.cap = "Percentuale di disoccupazione regionale nel 2015. \\label{figurelabel}", fig.pos="H"}
@@ -149,6 +151,8 @@ gp <- list(guide.label="Disoccupazione\nPercentuale", low="#fff0f0", high="red3"
 mapIT(DisPerc2015, Regione, data=disoccupazione, graphPar = gp)
 ```
 
+Fatta eccezione per le regioni Valle d'Aosta e Trentino Alto Adige di cui non abbiamo informazione, lo scenario appare graficamente molto simile allo studio precedente, con un Sud Italia più disoccupato con picco in Calabria.
+
 ```{r fig.cap = "Disoccupazione in italia confrontata con neolaureati. \\label{figurelabel}"}
 qqplot(disoccupazione_no_na$DisPerc2015*100,disoccupazione_no_na$entro_anno*100 , pch=20, xlab='Disoccupazione (%)',ylab='Laureati disoccupati ad un anno (%)',xlim=c(10,50),ylim=c(10,50))
 centr_x <- mean(disoccupazione_no_na$DisPerc2015*100)
@@ -158,7 +162,7 @@ abline(v=centr_x, h=centr_y, lwd=2, lty='dotted',col="gray")
 abline(a=0, b=1, lwd=2, col="red")
 ```
 
-Nella figura 2.1.3 notiamo la simmetria tra la disoccupazione la percentuale di neolaureati disoccupati, in quanto le due distribuzioni si dispongono tendenzialmente su due rette parallele. Il fatto che ci sia un *offset* tra le due è motivato dal fatto che stiamo analizzando due variabili di diversa natura, su campioni diversi costruiti però, nel medesimo luogo.
+Nella figura 2.1.3 notiamo la simmetria tra la disoccupazione e la percentuale di neolaureati disoccupati, in quanto le due distribuzioni si dispongono tendenzialmente su due rette parallele. Il fatto che ci sia un *offset* tra le due è motivato dal fatto che stiamo analizzando due variabili di diversa natura, su campioni diversi costruiti però nel medesimo luogo.
 
 Avendo a disposizione due dataset costruiti a dodici anni di distanza, possiamo calcolarci la variazione nella percentuale di disoccupazione. Rappresentiamo le due variabili su un piano cartesiano per mostrare la distribuzione dell'indice appena calcolato.
 
@@ -185,7 +189,9 @@ mapIT(delta_03_15, Regione, data=disoccupazione_no_na, graphPar = gp)
 ```
 
 
-Risulta evidente un aumento del 2.5% della disoccupazione in Basilicata negli ultimi dodici anni. Ad esclusione di quest'ultima, tutte le altre regioni hanno subito una diminuzione media del `r round(miglioramento_medio*100,0)`%.
+Risulta evidente un aumento del 2.5% della disoccupazione in Basilicata negli ultimi dodici anni. Ad esclusione di quest'ultima, tutte le altre regioni hanno subito una diminuzione media del `r round(miglioramento_medio*100,0)`% di disoccupazione. 
+
+Risulta curiosa la marcata differenza tra Puglia e Basilicata, praticamente agli estremi opposti della scala nonostante la vicinanza geografica che, come notato dai grafici precedenti, sembra comportare una similarità nei valori raccolti.
 
 ```{r}
 laureati_regioni_grouped <- by(laureati,laureati$regione ,function(x) 
@@ -202,7 +208,7 @@ ds.laureati_regioni$delta_03_15 <- disoccupazione_no_na[match(row.names(ds.laure
 ds.laureati_regioni$dis <- disoccupazione_no_na[match(row.names(ds.laureati_regioni) ,disoccupazione_no_na$Regione),]$DisPerc2015
 ```
 
-## Riduzione dimensionale
+## Motivazioni di trasferimento
 
 Dividiamo il campione di laureati, raggruppato per ambito, in due macro settori (*Scientifico* ed *Umanistico*) così suddivisi:
 
@@ -211,9 +217,7 @@ Dividiamo il campione di laureati, raggruppato per ambito, in due macro settori 
   \item Umanistico: Politico-sociale, Giuridico, Letterario, Linguistico, Insegnamento, Psicologico
 \end{itemize}
 
-## Riduzione dimensionale delle motivazioni di trasferimento
-
-Procediamo ad analizzare le componenti principali delle colonne inerenti al punteggio che hanno dato i laureati alle diverse ragioni per cui migrerebbero in un altro Stato.
+Procediamo ad analizzare le componenti principali delle proprietà inerenti al punteggio che hanno dato i laureati alle diverse ragioni per cui migrerebbero in un altro Stato.
 
 ```{r}
 ambiti_lauree <- c(
@@ -234,14 +238,15 @@ macro_ambito <- function(id_ambito){
            1,1,1,2,2,
            2,2,2,2,1,
            1) 
-  return(macro_ambiti[rel[id_ambito]])
+  return(rel[id_ambito])
 }
 
 ambiti_grouped <- by(laureati,laureati$GRUPPO_mIcro ,function(x) 
   data.frame(
     id_ambito           = x$GRUPPO_mIcro[1],
     ambito              = ambiti_lauree[x$GRUPPO_mIcro[1]],
-    macro_ambito        = macro_ambito(x$GRUPPO_mIcro[1]),
+    id_macro_ambito     = x$GRUPPO_mIcro[1],
+    macro_ambito        = macro_ambiti[macro_ambito(x$GRUPPO_mIcro[1])],
     voto_medio          = mean(x$L1_22,na.rm = TRUE),
     laureati            = length(x[,1]),
     occasioni_studio_formazione_scientifica	= 4 - mean(x$L4_17A,na.rm = TRUE),
@@ -260,7 +265,7 @@ pc <- princomp(df.laureati_ambiti[,7:13], cor = TRUE)
 summary(pc)
 ```
 
-Si constata che le prime tre componenti principali riassumono il 90% della varianza del campione e più del 75% con le prime due.
+Si constata che le prime tre componenti principali riassumono il 90% della varianza del campione, mentre le prime due riassumono il 75%.
 
 ```{r}
 round(cor(df.laureati_ambiti[,7:13], pc$scores[, 1:4]), 2)
@@ -302,7 +307,7 @@ abline(h = 0, v = 0, col = "gray", lty = "dashed")
 text(pc$scores[, c(1,3)], labels = ambiti_lauree_sh[df.laureati_ambiti_nosec$id_ambito], pos = 4, cex = 0.6)
 ```
 
-Nei grafici PC1/PC2 potremo quindi trovare ambiti i cui laurati sono motivati dalla ricerca di più lavoro maggiormente qualificato con l'avvicinarsi al lato sinistro mentre l'altezza esprime l'aumento di ricerca di occasioni di studio e di formazione scientifica con l'avvicinarsi al fondo scala negativo. Si può quindi notare che le ragioni appena elencate combacino con gli ambiti scientifici.
+Nei grafici PC1/PC2 potremo quindi trovare ambiti i cui laurati sono motivati dalla ricerca di più lavoro maggiormente qualificato con l'avvicinarsi al lato sinistro mentre l'altezza esprime l'aumento di ricerca di occasioni di studio e di formazione scientifica con l'avvicinarsi al fondo scala negativo. Si può quindi notare come le ragioni appena elencate combacino con gli ambiti scientifici.
 
 # Europa
 
@@ -345,25 +350,53 @@ par(mfrow=c(1,1))
 
 ```
 
-```{r}
-df3 <- na.omit(ds.europa_stati[,c(1,4,8)])
-
-plot(df3$gdp,df3$nmigr, xlab = "Prodotto interno lordo (x1000 euro)" , ylab = "Migrazione (%)")
-text(df3$gdp,df3$nmigr, labels = df3$sigla, pos = 4, cex = 0.6)
-
-d <- dist(scale(df3[,c(2,3)]), method="euclidean")
-dendro_ave <- hclust(d, method="average")
-plot(dendro_ave, xlab="Unita’", ylab="Distanza Euclidea",
-main="Genitori e Figli", labels=FALSE, hang=-1, sub="Legame Medio")
-
-n_stati <- length(df3[,1])
-
-text(1:n_stati, rep(-0.2,n_stati), labels=df3$sigla[dendro_ave$order], cex=0.7, las=3)
-```
+Eseguiamo un confronto tra la disoccupazione e la percentale di abbandono degli studi per ogni Stato.
 
 ```{r}
-dendro_ave$merge # crescita dell’albero dalle foglie verso la radice
+df3 <- na.omit(ds.europa_stati)
+
+eu_ab <- data.frame(
+  unempl = df3$unempl,
+  ledu = df3$ledu
+)
+rownames(eu_ab) <- df3$sigla
 ```
+
+Analizziamo ora le distanze tra le nazioni europee in base alle due variabili *disoccupazione* e *abbandono prematuro*. Tali valori si possono rappresentare con un dendrogramma, uno schema che permette di individuare il numero di cluster da utilizzare per avere una certa distanza massima tra le nazioni che vi appartengono.
+
+```{r fig.cap = "Distanza tra le nazioni europee. \\label{figurelabel}"}
+d <- dist(eu_ab)
+n <- length(eu_ab$unempl)
+clusters <- hclust(d, method="average")
+plot(clusters, xlab="Nazioni", ylab="Distanza (Euclidea)", main=" ", sub=" ", labels=rownames(eu_ab)[clusters$order], hang=-1)
+
+clusters.number <- 3
+```
+
+Notiamo subito un'importante distanza della Grecia dal resto delle nazioni europee, seguita dalla Slovacchia. Il grafico ci permette di vedere che la grande maggioranza degli stati (18 su 25) risulta essere molto concentrata, con una distanza massima prossima al valore 5.
+
+
+Proviamo ora a suddividere l'insieme di Nazioni in `r clusters.number` cluster
+
+```{r fig.cap = "Cluster delle nazioni. \\label{figurelabel}"}
+branches <- cutree(clusters, k=clusters.number)
+plot(clusters, xlab="Nazioni", ylab="Distanza (Euclidea)",main=" ", sub=" ", labels=rownames(eu_ab)[clusters$order], hang=-1)
+rect.hclust(clusters, k=clusters.number, branches)
+centers <- data.frame(do.call("rbind", by(eu_ab, branches, colMeans)))
+names(centers) = c("x","y")
+```
+
+
+Scegliendo questi `r clusters.number` cluster, possiamo rappresentare graficamente le nazioni in base alla loro distanza euclidea nel piano cartesiano delle variabili *disoccupazione* e *abbandono prematuro*.
+
+```{r fig.cap = "Disoccupazione e abbandoni scolastici prematuri. \\label{figurelabel}"}
+plot(eu_ab, xlab = "Disoccupazione (%)" , ylab = "Abbandoni scolastici prematuri (%)", col = branches)
+text(eu_ab, labels = df3$sigla, pos = 4, cex = 0.6, col = branches)
+points(centers,col=1:clusters.number,pch=8)
+```
+
 # Conclusioni e considerazioni personali
 
 Non è stato semplice gestire la mole di dati analizzata, in particolare il dataset relativo ai laureati. La quantità di variabili, codificate tramite valori non intuitivi non ha semplificato l'analisi.
+
+Sono rimasto soddisfatto del risultato dell'analisi, in quanto i valori ottenuti sembrano realistici e concordi con conoscenze in mio possesso o riflessioni personali. 
