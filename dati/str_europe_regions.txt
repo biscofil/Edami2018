@@ -1,0 +1,53 @@
+# EDAMI NOVEMBER 9TH, 2017
+# Starred Data
+#The regions of Europe
+# Data Source: EUROSTAT, 2016
+# http://ec.europa.eu/eurostat/web/regions/data/main-tables
+#########################
+# Data description
+# Several variables are collected on european regions (NUTS2 level, about 300 units)
+# to describe demographic, income, labour market participation and education features
+# Data are generally referred to 2014 or 2015
+# Description of NUTS classification in
+# http://ec.europa.eu/eurostat/web/nuts/overview 
+
+# Variables are divided in 4 chapters + nomenclature section
+
+# Nomenclature
+# region EUROSTAT code and name
+# country english name of country
+# clab EUROSTAT 2-character code of country name
+# rname full name of region
+# eu dummy variable of European Union membership (y/n yes/no)
+
+# Chapter 1 Demography
+# dens population density, no. of persons per kmq
+# fert total fertility rate, number of live births per woman
+# nmigr net migration rate, %
+# natg natural population change (live births minus deaths), %
+# life (lifef, lifem) total life expectancy at birth (female, male), no. of years
+ 
+# Chapter 2 Gross domestic product and income of households
+# gdp_pc regional gross domestic product per inhabitant, thousand euro
+# inc_pc disposable income of private households per inhabitant, thousand euro
+
+# Chapter 3 Labour market participation
+# empl (emplf, emplm) total employment rate of the age group 20-64 (female, male), %
+# unempl (unemplf, unemplm) total unemployment rate (female, male), %
+
+# Chapter 4 Education
+# hedu (heduf, hedum) tertiary educational attainment, age group 25-64 (female, male), %
+# ledu (leduf, ledum) early leavers from education and training (female, male), %
+
+# Guidelines for possible projects
+
+# Main problem is the exploration of group structures possibly different
+# from just COUNTRY LEVEL membership
+# Relations between variables in different chapters (e.g., education level
+# and income or labour market)
+# Gender disparity and corresponding impact on gdp and income
+# Identification of regions with exceptional features
+# Description of the profile of specific countries (e.g., Italy, Germany etc) 
+ 
+
+#############################################################################

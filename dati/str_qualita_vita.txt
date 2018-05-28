@@ -1,0 +1,25 @@
+################################################################################
+# EDAMI NOVEMBER 21TH, 2017
+# Starred Data
+# GEOGRAFIA DELLA QUALITA' DELLA VITA IN ITALIA
+# Fonte: Edizione 2004 dell'indagine Il Sole 24 Ore sulla qualità della vita 
+# nelle province italiane
+############################################################################################################################################################
+# DATA DESCRIPTION 
+# n = 103 ITALIAN PROVINCES
+# p = 10 VARIABLES
+#
+# Dati economici e sociodemografici delle 103 province italiane
+# Prov: nome della provincia
+# Sigla: sigla automobilistica
+# Area: area territoriale (NO: nord-ovest, NE: nord-est, C: centro, S: sud, I: isole)
+# Dis: persone in cerca di lavoro in rapporto alla forza lavoro (%, media 2003)
+# Esp: valore aggiunto derivante dalle esportazioni (%, 2003)
+# Iscr: nuove iscrizioni di imprese alle CC in rapporto alle cessazioni(ottobre 2003-settembre 2004)
+# Risp: depositi bancari pro capite (euro, 31/12/2003)
+# Cons: spesa pro capite per auto, moto, elettrodomestici e mobili (euro, 2003)
+# Vagg: valore aggiunto pro capite a prezzi correnti (euro, 2003)
+# Int: stima tasso d'interesse a breve (31/12/03)
+# 
+########################################################################
+

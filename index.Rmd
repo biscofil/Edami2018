@@ -1,0 +1,280 @@
+---
+title: "Analisi degli studi e dell'occupazione in Italia ed Europa"
+author: "Filippo Bisconcin, 852144"
+date: "24 May 2018"
+documentclass: "book"
+output:
+  pdf_document:
+    toc: true
+    number_sections: true
+classoption: oneside
+header-includes:
+- \usepackage[italian]{babel}
+- \usepackage{placeins}
+- \usepackage{setspace}
+- \usepackage{chngcntr}
+- \usepackage{fancyhdr}
+- \counterwithin{figure}{section}
+- \counterwithin{table}{section}
+- \pagestyle{plain}
+---
+
+\pagenumbering{arabic}
+\pagestyle{fancy}
+\fancyfoot{}
+
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter \,-  #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection \, #1}}
+\fancyhead[LE,RO]{\bfseries\thepage}
+\fancyhead[RE]{\bfseries\leftmark}
+\fancyhead[LO]{\bfseries\rightmark}
+\renewcommand{\headrulewidth}{0.3pt}
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path = 'figures/',fig.pos = 'H', echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(ggplot2)
+library(devtools)
+#install_github("quantide/mapIT")
+library(mapIT)
+```
+
+# Premessa
+
+Durante la stesura del progetto è nata la volontà nel sottoscritto di concentrarsi su un unico argomento, da trattare mediante dataset multipli rispetto all'analisi di tre o più situazioni scollegate tra di loro. 
+Tra le diverse proposte sono stati scelti i tre seguenti dataset di cui riportiamo la data di costruzione del campione:
+
+\begin{itemize}
+  \item 1) La qualità della vita delle province italiane: 2003/2004
+  \item 2) Laureati e lavoro: 2015
+  \item 3) Regioni Europee: 2016
+\end{itemize}
+
+Essendo di nostro interesse confrontare il grado di dissocupazione in Italia con la disoccupazione post-laurea saremmo costretti a confrontare due dataset costruiti a dodici anni di distanza. Ciò non sarebbe statisticamente accettabile, provvediamo quindi ad includere un quarto dataset messo a disposizione dall'ISTAT dalla quale possiamo estrarre i dati relativi al 2015.
+
+\begin{itemize}
+  \item 4) Tasso di disoccupazione: 2015
+\end{itemize}
+
+Utilizzeremo il primo dataset (2003) solo per confronti temporali con i dati aggiornati (2015).
+
+```{r, cache=TRUE}
+########################## Caricamento dei dati 
+
+ds.pro2003 <- read.table(file="http://venus.unive.it/romanaz/edami/dati/qual_vita04.txt", header=TRUE)
+laureati <- read.table("dati/InsProLau_Microdati_Anno_2015.txt", sep="\t",  header=TRUE)
+europa <- read.csv2('http://venus.unive.it/romanaz/edami/dati/europe.csv')
+
+# http://www.mandile.it/wp-content/uploads/provincia-regione-sigla.csv
+province_regioni <- read.csv(file="dati/provincia-regione-sigla.csv", header=FALSE)
+names(province_regioni) <- c("nome_provincia","regione","sigla_provincia")
+
+#http://dati.istat.it/Index.aspx?DataSetCode=DCCV_TAXDISOCCU1
+
+ds.pro2015 <- read.csv("dati/DCCV_TAXDISOCCU1_27052018150244903.csv",sep = ",", header=TRUE)
+ds.pro2015 <- ds.pro2015[ds.pro2015$TIME == 2015 & ds.pro2015$Sesso == "totale" & ds.pro2015$ETA1 == "Y_GE15",]
+
+########################## Aggiustamento dei dati
+
+#associo la regione ad ogni provincia
+ds.pro2003$regione <- province_regioni[match(ds.pro2003$Sigla,province_regioni$sigla_provincia),2]
+ds.pro2015$regione <- province_regioni[match(ds.pro2015$Territorio,province_regioni$nome_provincia),2]
+
+#associo gli ID delle regioni al loro nome
+
+regioni_lauree=c("Piemonte", "Valle d'Aosta", "Lombardia", "Trentino-Alto Adige", "Veneto", "Friuli-Venezia Giulia",  "Liguria",  "Emilia-Romagna", "Toscana",  "Umbria", "Marche", "Lazio",  "Abruzzo",  "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia",  "Sardegna")
+
+laureati$regione <- regioni_lauree[laureati$REG_UNI_mIcro]
+```
+
+# Italia
+
+Ci interessa analizzare la situazione del nostro Paese in fatto di occupazione e, in particolare, della relazione con le modalità di studio di un campione di laureati.
+
+## Disoccupazione post Laurea
+
+Cominciamo con l'analizzare la disoccupazione dei laureati ad un anno dalla conclusione del loro percorso di studi.
+
+```{r}
+laureati$L2_69 = laureati$L2_69 == 1
+laureati$disoccupati.entro.anno <- laureati$L2_69 == FALSE
+media.disoccupati.dopo.anno <- mean(laureati$disoccupati.entro.anno,na.rm = TRUE)
+```
+
+La percentuale nazionale di disoccupati dopo un anno dalla laurea è del `r round(media.disoccupati.dopo.anno*100,0)`%. 
+
+### Analisi per regione
+
+```{r fig.cap = "Percentuale studenti disoccupati dopo  un anno. \\label{figurelabel}"}
+#, fig.height=5, fig.width=5
+disoccupati.entro.anno <- by(laureati,laureati$REG_UNI_mIcro, function(x) mean(x$disoccupati.entro.anno,na.rm = TRUE))
+
+occupazione.stud.entro.anno <- data.frame(
+    Regione = regioni_lauree[as.integer(unlist(rownames(disoccupati.entro.anno)))],
+    DisOcc.perc = as.vector(disoccupati.entro.anno)
+)
+
+gp <- list(guide.label="Percentuale studenti\ndisoccupati dopo \nun anno", low="#fff0f0", high="red3")
+mapIT(DisOcc.perc, Regione, data=occupazione.stud.entro.anno, graphPar = gp)
+```
+
+Una volta analizzata la disoccupazione ad un anno dalla laurea, ci chiediamo se essa sia legata al livello di disoccupazione della regione. 
+
+```{r fig.cap = "Percentuale di disoccupazione regionale nel 2015. \\label{figurelabel}"}
+group.pro.2003 <- by(ds.pro2003,ds.pro2003$regione , function(x) mean(x$Dis,na.rm = TRUE))
+dis.reg.2003 <- as.data.frame(do.call("rbind", lapply(group.pro.2003,as.list)))
+names(dis.reg.2003) <- c("dis.2003")
+
+group.pro.2015 <- by(ds.pro2015,ds.pro2015$regione , function(x) mean(x$Value,na.rm = TRUE))
+dis.reg.2015 <- as.data.frame(do.call("rbind", lapply(group.pro.2015,as.list)))
+names(dis.reg.2015) <- c("dis.2015")
+
+disoccupazione <- data.frame(
+    Regione = row.names(dis.reg.2015),
+    DisPerc2015 = as.numeric(dis.reg.2015$dis.2015)/100,
+    DisPerc2003 = as.numeric(dis.reg.2003$dis.2003)/100
+)
+
+disoccupazione$delta_03_15 <- disoccupazione$DisPerc2015 - disoccupazione$DisPerc2003
+disoccupazione$entro_anno <- occupazione.stud.entro.anno[order(occupazione.stud.entro.anno$Regione),2]
+disoccupazione_no_na <- na.omit(disoccupazione)
+
+gp <- list(guide.label="Disoccupazione\nPercentuale", low="#fff0f0", high="red3")
+mapIT(DisPerc2015, Regione, data=disoccupazione, graphPar = gp)
+
+#pairs(~ voto_diploma_it + L1_22, data = laureati,col=laureati$L1_22)
+```
+
+```{r}
+reg<-lm(DisPerc2015 ~ entro_anno, data=disoccupazione_no_na)
+
+plot(disoccupazione_no_na$DisPerc2015*100,disoccupazione_no_na$entro_anno*100 , pch=20,xlab='Disoccupazione (%)',ylab='Laureati disoccupati ad un anno (%)',main='Disoccupazione in Italia',xlim=c(0,40),ylim=c(0,60))#,xlim=c(5,25),ylim=c(25,50))
+abline(reg)
+centr_x <- mean(disoccupazione_no_na$DisPerc2015*100)
+centr_y <- mean(disoccupazione_no_na$entro_anno*100)
+points(centr_x, centr_y, pch='*', cex=2,col="red")
+abline(v=centr_x, h=centr_y, lwd=2, lty='dotted')
+abline(a=0, b=1, lwd=2, col="red")
+
+
+#
+
+#abline(a=-centr_x, b=1, lwd=2, col="red")
+#abline(v=centr_x, h=centr_y, lwd=2, lty='dotted')
+
+
+#cor(disoccupazione[,2],disoccupazione[,3])
+```
+
+Avendo a disposizione due dataset costruiti a dodici anni di distanza, possiamo calcolarci la variazione nella percentuale di disoccupazione. Utilizziamo la solita rappresentazione grafica per mostrare la distribuzione dell'indice appena calcolato.
+
+```{r}
+#barplot(disoccupazione$delta_03_15*100,names.arg = disoccupazione$Regione, las=3,col = disoccupazione$delta_03_15 < 0,main = "Aumento dell'occupazione tra il 2003 e il 2015")
+
+miglioramento_medio <- mean(disoccupazione_no_na[disoccupazione_no_na$Regione != "Basilicata",4])
+
+reg<-lm(DisPerc2003~ DisPerc2015, data = disoccupazione_no_na)
+
+plot(disoccupazione_no_na$DisPerc2003*100, disoccupazione_no_na$DisPerc2015*100, pch=20,xlab='Disoccupazione al 2003 (%)',ylab='Disoccupazione al 2015 (%)',main='Disoccupazione in Italia',xlim=c(0,30),ylim=c(0,30))
+
+abline(reg)
+
+centr_x <- mean(disoccupazione_no_na$DisPerc2003*100)
+centr_y <- mean(disoccupazione_no_na$DisPerc2015*100)
+
+points(centr_x, centr_y, pch='*', cex=2)
+abline(a=0, b=1, lwd=2, col="red")
+abline(v=centr_x, h=centr_y, lwd=2, lty='dotted')
+#cov(vote$V08, vote$V12)
+
+```
+
+Il grafico soprastante indica la correlazione tra la disoccupazione nelle due annate 2003 e 2015. Punti al di sopra della diagonale indicano regioni la cui disoccupazione nel 2015 risulta minore della rilevazione eseguita nel 2003.
+
+Risulta evidente un aumento del 2.5% della disoccupazione in Basilicata negli ultimi dodici anni. Ad esclusione di quest'ultima, tutte le altre regioni hanno subito una diminuzione media del `r round(miglioramento_medio*100,0)` %
+
+```{r}
+gp <- list(guide.label="Variazione 2003-2015", low="red3", high="green3")
+mapIT(delta_03_15, Regione, data=disoccupazione_no_na, graphPar = gp)
+```
+
+```{r}
+laureati_regioni_grouped <- by(laureati,laureati$regione ,function(x) 
+  data.frame(
+  voto_medio = mean(x$L1_22,na.rm = TRUE),
+  laureati=length(x[,1]),
+  pa=mean(x$L2_10 == 1,na.rm = TRUE),
+  lascerebbero_italia=mean(x$L4_14,na.rm = TRUE)
+  )
+)
+
+ds.laureati_regioni <- data.frame(do.call("rbind", laureati_regioni_grouped))
+
+#ds.laureati_regioni$regione <- row.names(ds.laureati_regioni)
+#rownames(ds.laureati_regioni) <- c()
+ds.laureati_regioni$delta_03_15 <- disoccupazione_no_na[match(row.names(ds.laureati_regioni) ,disoccupazione_no_na$Regione),]$delta_03_15
+```
+
+## PCA
+
+```{r}
+k <- na.omit(ds.laureati_regioni)
+#pairs(laureati[,c(11,32,84)]) # k
+
+pc <- princomp(k,cor = TRUE)
+summary(pc)
+round(cor(k, pc$scores[, 1:4]), 2)
+
+plot(pc$scores[, 1:2],col = laureati$REG_UNI_mIcro)
+
+k <- na.omit(laureati[,c(11,19,20,21,22,23,24,32,84,99,100,101,102,103,104,105,106,107,135,172,173,174,175,176,177,178)])
+
+#pairs(laureati[,c(11,32,84)]) # k
+#dev.copy(pdf, "pairs.pdf")
+#dev.off()
+
+pc <- princomp(k, cor = TRUE)
+summary(pc)
+round(cor(k, pc$scores[, 1:10]), 2)
+
+
+```
+
+
+# Europa
+
+Ci chiediamo se l'appartenenza o meno all'unione europea abbia una qualche relazione con la percentuale di studenti che interrompono gli studi prematuramente. 
+
+```{r}
+zona_euro <- europa[europa$eu == "y",]
+no_zona_euro <- europa[europa$eu != "y",]
+
+boxplot(zona_euro$ledu,no_zona_euro$ledu,names=c("EU","NO EU"))
+abline(h = mean(europa[europa$country == "Italy",]$ledu), col = "red") 
+```
+
+Allo scopo di farci un'idea della posizione del nostro Paese, rappresentiamo la media dei nostri abbandoni con una linea rossa. Ci accorgiamo di essere vicini al terzo quartile della distribuzione EU e al primo quartile della distribuzione NO-EU.
+
+Notiamo una notevole differenza tra i due gruppi di stati: i paesi appartenenti all'Unione Europea risultano avere una minore percentuale di abbandoni prematuri degli studi.
+
+```{r}
+# PCA (standardized data) 
+x <- na.omit(europa[,c(6,7,8,9,10,13,14,15,18,21,24)])
+pc <- princomp(x, cor=TRUE)
+summary(pc)
+round(cor(x,pc$scores[,1:6]),2)
+
+col <- europa$eu
+
+plot(pc$scores[,1:2], xlab="PC1 (38%)", ylab="PC2 (18%)", cex=0.7, col=col)
+pairs(pc$scores[,1:5],col=col)
+
+```
+
+# Conclusioni
+
+## Considerazioni personali
+
+Non è stato semplice gestire la mole di dati analizzata, in particolare il dataset relativo ai laureati. La quantità di variabili, codificate tramite valori non intuitivi non ha semplificato d certo l'analisi.

@@ -1,0 +1,65 @@
+\documentclass[11pt,a4paper,twoside,openright]{book} %report
+
+\usepackage{url,amsfonts,epsfig}
+\usepackage{afterpage}
+\usepackage{amsmath,amssymb}            
+\usepackage{rotating}  
+\usepackage{fancyhdr}  
+%\usepackage[scriptsize]{caption2} 
+%\hyphenation{a-gen-tiz-za-zio-ne}
+
+%\setlength{\paperwidth}{16cm}
+%\setlength{\paperheight}{24cm}
+%\setlength{\oddsidemargin} {2. cm}
+%\setlength{\evensidemargin} {2. cm}
+\addtolength{\oddsidemargin} {-0.4 cm}
+\addtolength{\evensidemargin} {-0.4 cm}
+\linespread{1.1}
+\usepackage[italian]{babel}
+%\usepackage[latin1]{inputenc}
+%\renewcommand{\captionfont}{\normalfont \sffamily \itshape \small}
+
+\pagestyle{empty}
+
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+\title{Esame di Elementi di Data Mining}
+\author{Filippo Bisconcin, 852144}
+\date{28 Maggio 2018}
+
+\begin{document}
+
+\frontmatter
+
+\input{frontespizio.tex}
+
+%\thispagestyle{empty} \normalfont \cleardoublepage
+
+%\thispagestyle{empty} \vspace*{.75truecm} \normalfont \cleardoublepage
+
+
+\pagestyle{plain}
+\tableofcontents
+\pagestyle{empty}\cleardoublepage
+\pagenumbering{arabic}
+
+\pagestyle{fancy} 
+\fancyfoot{}                                               
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter.\ #1}{}} 
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}         
+\fancyhead[LE,RO]{\bfseries\thepage}    
+                                        
+\fancyhead[RE]{\bfseries\leftmark}    
+\fancyhead[LO]{\bfseries\rightmark}     
+\renewcommand{\headrulewidth}{0.3pt} 
+
+\input{introduzione.tex}
+
+\mainmatter
+
+\input{capitolo.tex}
+
+\backmatter
+
+\end{document}

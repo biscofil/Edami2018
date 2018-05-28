@@ -1,0 +1,203 @@
+# EDAMI NOVEMBER 29TH, 2017 
+# Starred data set
+# Microdati dall'indagine 'LAUREATI E LAVORO', 2015 dell'ISTAT
+# https://www.istat.it/it/archivio/8338
+
+##############################################################################
+
+# L'indagine si propone di studiare l'inserimento nel mondo del lavoro dei laureati
+# a distanza di alcuni anni dal conseguimento del titolo.
+# Sono coperte molte problematiche d'interesse: differenze di genere, area territoriale,
+# classe sociale della famiglia del laureato, ecc.
+# Per le modalità dell'indagine campionaria si veda la pagina ISTAT indicata sopra.
+#############################################################################
+
+# Il file fornisce un campione di 58400 laureati
+# Lista delle variabili:
+    # Progressivo nell'ambito del censimento dei laureati
+    # Regione ateneo
+    # Tipo di laurea
+    # Gruppo di laurea
+    # Classe di laurea
+    # Sesso
+    # Cittadinanza
+    # Tipo di diploma
+    # Luogo conseguimento del diploma
+    # Voto di diploma conseguito all'estero o in Italia
+    # Voto di diploma (se conseguito in Italia)
+    # Classe di età al momento del conseguimento laurea
+    # Regione di residenza o estero prima dell'iscrizione all'università
+    # Ripartizione di residenza prima dell'iscrizione all'università
+    # Titolo di studio che ha consentito l'accesso alla laurea specialistica biennale
+    # Regione dell'ateneo in cui ha conseguito la laurea specialistica biennale (se conseguita in Italia)
+    # Area disciplinare della laurea che ha consentito iscrizione alla laurea specialistica
+    # Conseguimento di altri titoli di studio prima del 2011
+    # Giudizio sui fattori che hanno influito sulla scelta dell'Ateneo: prestigio dell'ateneo
+    # Giudizio sui fattori che hanno influito sulla scelta dell'Ateneo: qualità di servizi e strutture
+    # Giudizio sui fattori che hanno influito sulla scelta dell'Ateneo: offerta formativa consona alle esigenze
+    # Giudizio sui fattori che hanno influito sulla scelta dell'Ateneo: vicinanza sede univesritaria
+    # Giudizio sui fattori che hanno influito sulla scelta dell'Ateneo: esperienze in contesto territoriale diverso
+    # Giudizio sui fattori che hanno influito sulla scelta dell'Ateneo: impossibilità legata ai costi di fare scelte diverse
+    # Riconoscimento dei crediti al momento dell'immatricolazione
+    # Frequenza della lezioni durante il corso di laurea
+    # Frequenza di corsi privati di preparazione agli esami durante il corso di laurea
+    # Partecipazione a programmi volti a promuovere la mobilità studentesca in ambito europeo o extraeuropeo
+    # Stato estero in cui si è recato per svolgere i programmi
+    # Tipo di lavoro retribuito svolto durante il corso di laurea
+    # Iscritto in corso o fuori corso quando si è laureato
+    # Voto di laurea conseguito
+    # Motivo principale per cui ha scelto quel corso di laurea
+    # Si iscriverebbe allo stesso corso di laurea se dovesse scegliere oggi
+    # Motivo principale per cui non si iscriverebbe allo stesso corso di laurea
+    # Si iscriverebbe comunque di nuovo all?università
+    # Motivo principale per cui non si iscriverebbe di nuovo all?università
+    # Superamento dopo la laurea di un esame di stato per l?abilitazione all?esercizio di un?attività professionale
+    # Iscrizione ad un altro corso dopo la laurea: master di primo livello
+    # Iscrizione ad un altro corso dopo la laurea: master universitario di secondo livello
+    # Iscrizione ad un altro corso dopo la laurea: laurea specialistica biennale
+    # Iscrizione ad un altro corso dopo la laurea: un corso di laurea a ciclo unico di 5-6 anni
+    # Iscrizione ad un altro corso dopo la laurea: corso di laurea triennale
+    # Motivo principale dell'iscrizione ad una nuova laurea specialistica
+    # Attività formative dopo la laurea: dottorato di ricerca
+    # Attività formative dopo la laurea: specializzazione post-laurea
+    # Attività formative dopo la laurea: master extrauniversitario
+    # Attività formative dopo la laurea: borsa di studio/lavoro
+    # Attività formative dopo la laurea: stage
+    # Attività formative dopo la laurea: tirocinio o il praticantato
+    # Attività formative dopo la laurea: corso di formazione professionale o di aggiornamento
+    # Attività formative dopo la laurea: altro corso di studio o formazione
+    # L'attività che sta attualmente frequentando è retribuita
+    # Il dottorato di ricerca è retribuito
+    # La specializzazione post-laurea è retribuita
+    # Il master extrauniversitario è retribuito
+    # La borsa di studio/lavoro è retribuita
+    # Lo stage è retribuito
+    # Il tirocinio o il praticantato è retribuito
+    # Il corso di formazione professionale o di aggiornamento è retribuito
+    # L'attività di studio o formazione è retribuita
+    # Attività alle quali dedica mediamente più ore
+    # Situazione lavorativa
+    # Motivo principale per cui non lavora
+    # Svolgimento di più di un'attività lavorativa
+    # Qual è l'attività principale tra lavoro e attività formativa
+    # Tipo di lavoro
+    # Posizione lavoro autonomo
+    # Posizione lavoro dipendente
+    # Ha dipendenti
+    # Lavora per una Pubblica Amministrazione o privato
+    # Settore economico
+    # Dettaglio settore economico (Ateco industria)
+    # Dettaglio settore economico (Ateco servizi)
+    # Codifica della professione a 2 digit
+    # Area tematica attività di formazione
+    # Contratto di lavoro a tempo indeterminato o a termine
+    # iniziato lavoro con un contratto a termine o senza scadenza
+    # Tipo di contratto con il quale lavora
+    # lavoro a termine per scelta o perché non ha trovato lavoro a tempo indeterminato
+    # Possibilità che questo lavoro si trasformi a tempo indeterminato
+    # Lavora a tempo pieno o part-time
+    # Motivo lavoro part-time
+    # Numero di ore a settimana che dedica all'attività lavorativa
+    # Codice Regione o Stato Estero in cui svolge l'attività lavorativa
+    # Codice Ripartizione in cui svolge l'attività lavorativa
+    # Inizio attività principale prima o dopo il conseguimento della laurea nel 2011
+    # Inizio attività principale prima o dopo il conseguimento della laurea specialistica
+    # Inizio attività principale prima o dopo il conseguimento del titolo che le ha dato accesso al corso di laurea specialistica
+    # Canale di accesso alla sua attuale attività lavorativa
+    # Persona in particolare che l?ha aiutata ad iniziare la sua attività lavorativa
+    # Di chi si tratta
+    # Modo in cui è stato aiutato
+    # Miglioramento della sua posizione lavorativa con il conseguimento della laurea
+    # Miglioramento del suo reddito da lavoro con il conseguimento della laurea
+    # Laurea richiesta per accedere al lavoro
+    # Laurea richiesta di un?area disciplinare specifica
+    # Richiesta una votazione minima
+    # Soddisfazione: mansioni svolte
+    # Soddisfazione: prospettive di stabilità e di sicurezza del lavoro
+    # Soddisfazione: grado di autonomia/livello di responsabilità
+    # Soddisfazione: utilizzo delle conoscenze acquisite all?università
+    # Soddisfazione: trattamento economico
+    # Soddisfazione: possibilità di carriera
+    # Soddisfazione: possibilità di arricchimento professionale
+    # Livello di soddisfazione complessivo (punteggio 0-10)
+    # Numero di ore a settimana che dedica alle altre attività lavorative/attività formative
+    # Lavorava quando ha discusso la tesi di laurea nel 2011
+    # Opportunità di lavoro dal conseguimento della laurea ad oggi
+    # Almeno un'opportunità di lavoro accettata
+    # Motivo principale per cui non ha accettato
+    # Tipo di lavoro con riferimento alla prima opportunità accettata
+    # Motivo principale per cui il lavoro è terminato
+    # Lavoro a un anno dal conseguimento della laurea
+    # Ricerca di lavoro a un anno dal conseguimento della laurea
+    # Tipo di attività che svolgeva
+    # Luogo in cui svolgeva prevalentemente l'attività
+    # Attualmente cerca lavoro
+    # Motivo principale per cui non cerca lavoro
+    # Motivo principale per cui cerca un nuovo lavoro
+    # Modo in cui cerca lavoro: colloqui di lavoro o selezioni presso privati
+    # Modo in cui cerca lavoro: prove per concorsi pubblici
+    # Modo in cui cerca lavoro: invio curriculum a privati o domande per partecipare a concorsi pubblici
+    # Modo in cui cerca lavoro: utilizzo i giornali per mettere inserzioni o rispondere ad annunci
+    # Modo in cui cerca lavoro: utilizzo Internet per trovare offerte/annunci di lavoro
+    # Modo in cui cerca lavoro: attraverso i Centri pubblici per l?impiego o le Agenzie interinali
+    # Modo in cui cerca lavoro: parenti, amici, conoscenti, sindacati, ecc.
+    # Modo in cui cerca lavoro: ricerca di informazioni o risorse per avviare un'attività
+    # Modo in cui cerca lavoro: altra azione
+    # Ultima azione concreta per cercare lavoro
+    # Preferenza a lavorare a tempo pieno o part-time
+    # Preferenza a lavorare come dipendente o autonomo
+    # Luogo in cui sarebbe disposto a lavorare
+    # Disponibilità a cambiare città per lavorare
+    # Cifra mensile netta minima disposto ad accettare per un lavoro nuovo
+    # Disponibilità a iniziare il lavoro entro le prossime due settimane
+    # Regione di attuale domicilio o estero
+    # Ripartizione di attuale domicilio
+    # Trasferimento nel comune della sede universitaria per seguire gli studi
+    # Tempo impiegato dal luogo in cui abitava alla sede universitaria
+    # Giudizio su aspetti legati al trasferimento: lavoro più qualificato
+    # Giudizio su aspetti legati al trasferimento: lavoro maggiormente retribuito
+    # Giudizio su aspetti legati al trasferimento: maggiori occasioni di studio e formazione scientifica
+    # Giudizio su aspetti legati al trasferimento: paese all'avanguardia nel settore di interesse
+    # Giudizio su aspetti legati al trasferimento: motivi familiari e/o personali
+    # Pensa di lasciare l'Italia nei prossimi 12 mesi
+    # Quanto a lungo pensa di rimanere in Italia
+    # Stato estero in cui pensa di andare
+    # Motivo per cui lascerebbe l'Italia: occasioni di studio e formazione scientifica
+    # Motivo per cui lascerebbe l'Italia: precedenti esperienze di studio o lavoro
+    # Motivo per cui lascerebbe l'Italia: più opportunità di lavoro
+    # Motivo per cui lascerebbe l'Italia: opportunità di lavoro maggiormente qualificato
+    # Motivo per cui lascerebbe l'Italia: opportunità di lavoro maggiormente retribuito
+    # Motivo per cui lascerebbe l'Italia: paese all'avanguardia nel settore di interesse
+    # Motivo per cui lascerebbe l'Italia: accordi bilaterali tra Italia e Paese di destinazione
+    # Motivo per cui lascerebbe l'Italia: motivi familiari e/o personali
+    # Stato civile
+    # Attualmente vive con famiglia di origine
+    # Motivo principale per cui vive con la famiglia
+    # Padre: titolo di studio
+    # Padre: condizione occupazionale
+    # Padre: lavoro dipendente o autonomo
+    # Padre: posizione lavoro autonomo
+    # Padre: posizione lavoro dipendente
+    # Madre: titolo di studio
+    # Madre: condizione occupazionale
+    # Madre: lavoro dipendente o autonomo
+    # Madre: posizione lavoro dipendente
+    # Madre: posizione lavoro autonomo
+    # peso calibrato
+    # reddito mensile del lavoro principale
+    # reddito mensile totale
+    # durata studi universitari
+    # anni intercorrenti dalla seconda laurea al lavoro attuale/attivita formativa
+    # mesi intercorrenti dalla laurea all'attuale lavoro
+    # mesi intercorrenti dalla laurea al primo lavoro/opportunità
+    # mesi intercorrenti dalla prima opportunità di lavoro al lavoro attuale
+    # durata in mesi del lavoro attuale
+
+# Loading data in R
+# The zip file laulav15.zip contains
+# the raw data file InsProLau_Microdati_Anno_2015.txt
+# a courtesy file PGM_2015_IT_DELIMITED.R to read and recode the raw data 
+# (note that the raw data file directory must be checked and redefined by the user)
+# an RData DF_InsProLau_A2015 to avoid time-consuming loading of data
+# the folder METADATI containing detailed description of variables as well as data collection.
+# All material provided by ISTAT!

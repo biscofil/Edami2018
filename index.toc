@@ -1,0 +1,8 @@
+\babel@toc {italian}{}
+\babel@toc {italian}{}
+\contentsline {chapter}{\numberline {1}Premessa}{2}{chapter.1}
+\contentsline {chapter}{\numberline {2}Italia}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Disoccupazione post Laurea}{3}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Analisi per regione}{3}{subsection.2.1.1}
+\contentsline {section}{\numberline {2.2}PCA}{6}{section.2.2}
+\contentsline {chapter}{\numberline {3}Europa}{9}{chapter.3}
