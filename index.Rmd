@@ -7,7 +7,7 @@ output:
   pdf_document:
     toc: true
     number_sections: true
-    fig_caption: yes
+    fig_cap: yes
     keep_tex: yes
 classoption: oneside
 header-includes:
@@ -20,10 +20,11 @@ header-includes:
 - \counterwithin{figure}{section}
 - \counterwithin{table}{section}
 - \pagestyle{plain}
+- \floatplacement{figure}{H}
 ---
 
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.path = 'figures/', fig.pos = 'H', echo = FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(fig.path = 'figures/', fig.pos = 'h', echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
 
@@ -48,7 +49,7 @@ library(mapIT)
 # Premessa
 
 Durante la stesura del progetto è nata la volontà nel sottoscritto di concentrarsi su un unico argomento, da trattare mediante dataset multipli rispetto all'analisi di tre o più situazioni scollegate tra di loro. 
-Tra le diverse proposte sono stati scelti i tre seguenti dataset di cui riportiamo la data di costruzione del campione:
+Tra le diverse proposte sono stati scelti i tre seguenti dataset, di cui riportiamo la data di costruzione del campione:
 
 \begin{itemize}
   \item 1) La qualità della vita delle province italiane: 2003/2004
@@ -56,7 +57,7 @@ Tra le diverse proposte sono stati scelti i tre seguenti dataset di cui riportia
   \item 3) Regioni Europee: 2016
 \end{itemize}
 
-Essendo di nostro interesse confrontare il grado di dissocupazione in Italia con la disoccupazione post-laurea saremmo costretti a confrontare due dataset costruiti a dodici anni di distanza. Ciò non sarebbe statisticamente accettabile, provvediamo quindi ad includere un quarto dataset messo a disposizione dall'ISTAT dalla quale possiamo estrarre i dati relativi al 2015.
+Essendo di nostro interesse confrontare il grado di disoccupazione in Italia con la disoccupazione post-laurea saremmo costretti a confrontare due dataset costruiti a dodici anni di distanza. Ciò non è e accettabile, quindi provvediamo ad includere un quarto dataset messo a disposizione dall'ISTAT dal quale possiamo estrarre i dati relativi al 2015.
 
 \begin{itemize}
   \item 4) Tasso di disoccupazione: 2015
@@ -97,7 +98,7 @@ laureati$regione <- regioni_lauree[laureati$REG_UNI_mIcro]
 
 Ci interessa analizzare la situazione del nostro Paese in fatto di occupazione e, in particolare, della relazione con le modalità di studio di un campione di laureati.
 
-## Disoccupazione post Laurea
+## Disoccupazione post-laurea
 
 Cominciamo con l'analizzare la disoccupazione dei laureati ad un anno dalla conclusione del loro percorso di studi.
 
@@ -111,8 +112,7 @@ La percentuale nazionale di disoccupati dopo un anno dalla laurea è del `r roun
 
 ### Analisi per regione
 
-```{r fig.cap = "Percentuale studenti disoccupati dopo  un anno. \\label{figurelabel}", fig.pos="H"}
-#, fig.height=5, fig.width=5
+```{r fig.cap = "Percentuale studenti disoccupati dopo un anno dal termine del loro percorso di studi. \\label{figurelabel}", fig.pos="H"}
 disoccupati.entro.anno <- by(laureati,laureati$REG_UNI_mIcro, function(x) mean(x$disoccupati.entro.anno,na.rm = TRUE))
 
 occupazione.stud.entro.anno <- data.frame(
@@ -160,7 +160,7 @@ abline(a=0, b=1, lwd=2, col="red")
 
 Nella figura 2.1.3 notiamo la simmetria tra la disoccupazione la percentuale di neolaureati disoccupati, in quanto le due distribuzioni si dispongono tendenzialmente su due rette parallele. Il fatto che ci sia un *offset* tra le due è motivato dal fatto che stiamo analizzando due variabili di diversa natura, su campioni diversi costruiti però, nel medesimo luogo.
 
-Avendo a disposizione due dataset costruiti a dodici anni di distanza, possiamo calcolarci la variazione nella percentuale di disoccupazione. Utilizziamo la solita rappresentazione grafica per mostrare la distribuzione dell'indice appena calcolato.
+Avendo a disposizione due dataset costruiti a dodici anni di distanza, possiamo calcolarci la variazione nella percentuale di disoccupazione. Rappresentiamo le due variabili su un piano cartesiano per mostrare la distribuzione dell'indice appena calcolato.
 
 ```{r fig.cap = "Disoccupazione in italia 2003/2015. \\label{figurelabel}"}
 miglioramento_medio <- mean(disoccupazione_no_na[disoccupazione_no_na$Regione != "Basilicata",4])
@@ -177,14 +177,15 @@ abline(v=centr_x, h=centr_y, lwd=2, lty='dotted',col='gray')
 
 La figura 2.1.4 mostra la correlazione tra la disoccupazione nelle due annate 2003 e 2015. Punti al di sopra della diagonale indicano regioni la cui disoccupazione nel 2015 risulta minore della rilevazione eseguita nel 2003.
 
-Risulta evidente un aumento del 2.5% della disoccupazione in Basilicata negli ultimi dodici anni. Ad esclusione di quest'ultima, tutte le altre regioni hanno subito una diminuzione media del `r round(miglioramento_medio*100,0)`%.
-
 Proponiamo una rappresentazione geografica di quanto appena analizzato.
 
 ```{r fig.cap = "Variazione della disoccupazione percentuale dal 2003 al 2015. \\label{figurelabel}"}
 gp <- list(guide.label="Variazione percentuale", low="red3", high="green3",show_grid=FALSE)
 mapIT(delta_03_15, Regione, data=disoccupazione_no_na, graphPar = gp)
 ```
+
+
+Risulta evidente un aumento del 2.5% della disoccupazione in Basilicata negli ultimi dodici anni. Ad esclusione di quest'ultima, tutte le altre regioni hanno subito una diminuzione media del `r round(miglioramento_medio*100,0)`%.
 
 ```{r}
 laureati_regioni_grouped <- by(laureati,laureati$regione ,function(x) 
@@ -203,14 +204,14 @@ ds.laureati_regioni$dis <- disoccupazione_no_na[match(row.names(ds.laureati_regi
 
 ## Riduzione dimensionale
 
-Dividiamo il campione di laureati, raggruppato per ambito, in due macro ambiti (*Scientifico* ed *Umanistico*) così suddivisi:
+Dividiamo il campione di laureati, raggruppato per ambito, in due macro settori (*Scientifico* ed *Umanistico*) così suddivisi:
 
 \begin{itemize}
   \item Scientifico: Scientifico, Chimico-farmaceutico, Geo-biologico, Medico, Ingegneria, Architettura, Agrario, Economico-statistico, Educazione fisica, Difesa e sicurezza
   \item Umanistico: Politico-sociale, Giuridico, Letterario, Linguistico, Insegnamento, Psicologico
 \end{itemize}
 
-## Riduzione dimensionale delle motivazioni di traferimento
+## Riduzione dimensionale delle motivazioni di trasferimento
 
 Procediamo ad analizzare le componenti principali delle colonne inerenti al punteggio che hanno dato i laureati alle diverse ragioni per cui migrerebbero in un altro Stato.
 
@@ -259,13 +260,13 @@ pc <- princomp(df.laureati_ambiti[,7:13], cor = TRUE)
 summary(pc)
 ```
 
-Constatiamo che con le prime tre componenti principali riusciamo a riassumere il 90% della varianza del campione e più del 75% con le prime due.
+Si constata che le prime tre componenti principali riassumono il 90% della varianza del campione e più del 75% con le prime due.
 
 ```{r}
 round(cor(df.laureati_ambiti[,7:13], pc$scores[, 1:4]), 2)
 ```
 
-La prima risulta essere fortemente correlata con la variabile "Più opportunità di lavoro" (-0.97) e con "Lavoro maggiormente qualificato" (-0.96) .
+La prima componente principale risulta essere fortemente correlata con la variabile "Più opportunità di lavoro" (-0.97) e con "Lavoro maggiormente qualificato" (-0.96) .
 
 La seconda è dominata da "Motivi familiari e personali" (0.79) e da "Precedenti esperienze di studio e/o lavoro" (0.70).
 
@@ -315,7 +316,7 @@ boxplot(zona_euro$ledu,no_zona_euro$ledu,names=c("EU","NO EU"))
 abline(h = mean(europa[europa$country == "Italy",]$ledu), col = "red") 
 ```
 
-Allo scopo di farci un'idea della posizione del nostro Paese, rappresentiamo la media dei nostri abbandoni con una linea rossa. Ci accorgiamo di essere vicini al terzo quartile della distribuzione EU e al primo quartile della distribuzione NO-EU.
+Allo scopo di farci un'idea della posizione del nostro Paese, rappresentiamo la relativa media con una linea rossa. Ci accorgiamo di essere vicini al terzo quartile della distribuzione EU e al primo quartile della distribuzione NO-EU.
 
 Notiamo una notevole differenza tra i due gruppi di stati: i paesi appartenenti all'Unione Europea risultano avere una minore percentuale di abbandoni prematuri degli studi, **ipoteticamente** dovuta a politiche di educazioni più motivanti (Es: Erasmus) o classifiche periodiche sulla qualità dell'insegnamento.
 
