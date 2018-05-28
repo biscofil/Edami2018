@@ -1,7 +1,8 @@
 ---
 title: "Analisi degli studi e dell'occupazione in Italia ed Europa"
 author: "Filippo Bisconcin, 852144"
-date: "24 May 2018"
+date: "28 Maggio 2018"
+subtitle: 'Prova pratica del corso di Elementi di Data Mining'
 documentclass: "book"
 output:
   pdf_document:
@@ -21,6 +22,8 @@ header-includes:
 - \counterwithin{table}{section}
 - \pagestyle{plain}
 - \floatplacement{figure}{H}
+- \pretitle{\begin{center}\LARGE\includegraphics[width=5cm]{unive.pdf}\\[\bigskipamount]}
+- \posttitle{\end{center}}
 ---
 
 ```{r global_options, include=FALSE}
@@ -179,7 +182,7 @@ abline(a=0, b=1, lwd=2, col="red")
 abline(v=centr_x, h=centr_y, lwd=2, lty='dotted',col='gray')
 ```
 
-La figura 2.1.4 mostra la correlazione tra la disoccupazione nelle due annate 2003 e 2015. Punti al di sopra della diagonale indicano regioni la cui disoccupazione nel 2015 risulta minore della rilevazione eseguita nel 2003.
+La figura 2.1.4 mostra la correlazione tra la disoccupazione nelle due annate 2003 e 2015. Nelle regioni che compaiono al di sopra della diagonale, la disoccupazione nel 2015 risulta diminuita rispetto alla rilevazione effettuata nel 2003.
 
 Proponiamo una rappresentazione geografica di quanto appena analizzato.
 
