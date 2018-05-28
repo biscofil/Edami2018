@@ -13,11 +13,24 @@ header-includes:
 - \usepackage{placeins}
 - \usepackage{setspace}
 - \usepackage{chngcntr}
+- \usepackage{float}
 - \usepackage{fancyhdr}
 - \counterwithin{figure}{section}
 - \counterwithin{table}{section}
 - \pagestyle{plain}
 ---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path = 'figures/',fig.pos = 'H', echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+```{r}
+library(ggplot2)
+library(devtools)
+#install_github("quantide/mapIT")
+library(mapIT)
+```
 
 \pagenumbering{arabic}
 \pagestyle{fancy}
@@ -29,17 +42,6 @@ header-includes:
 \fancyhead[RE]{\bfseries\leftmark}
 \fancyhead[LO]{\bfseries\rightmark}
 \renewcommand{\headrulewidth}{0.3pt}
-
-```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.path = 'figures/',fig.pos = 'H', echo = FALSE, warning = FALSE, message = FALSE)
-```
-
-```{r}
-library(ggplot2)
-library(devtools)
-#install_github("quantide/mapIT")
-library(mapIT)
-```
 
 # Premessa
 
@@ -116,7 +118,7 @@ occupazione.stud.entro.anno <- data.frame(
     DisOcc.perc = as.vector(disoccupati.entro.anno)
 )
 
-gp <- list(guide.label="Percentuale studenti\ndisoccupati dopo \nun anno", low="#fff0f0", high="red3")
+gp <- list(guide.label="Percentuale studenti\ndisoccupati dopo \nun anno", low="#fff0f0", high="red3", show_grid=FALSE)
 mapIT(DisOcc.perc, Regione, data=occupazione.stud.entro.anno, graphPar = gp)
 ```
 
@@ -141,7 +143,10 @@ disoccupazione$delta_03_15 <- disoccupazione$DisPerc2015 - disoccupazione$DisPer
 disoccupazione$entro_anno <- occupazione.stud.entro.anno[order(occupazione.stud.entro.anno$Regione),2]
 disoccupazione_no_na <- na.omit(disoccupazione)
 
-gp <- list(guide.label="Disoccupazione\nPercentuale", low="#fff0f0", high="red3")
+
+
+
+gp <- list(guide.label="Disoccupazione\nPercentuale", low="#fff0f0", high="red3", show_grid=FALSE)
 mapIT(DisPerc2015, Regione, data=disoccupazione, graphPar = gp)
 
 #pairs(~ voto_diploma_it + L1_22, data = laureati,col=laureati$L1_22)
@@ -196,7 +201,7 @@ Il grafico soprastante indica la correlazione tra la disoccupazione nelle due an
 Risulta evidente un aumento del 2.5% della disoccupazione in Basilicata negli ultimi dodici anni. Ad esclusione di quest'ultima, tutte le altre regioni hanno subito una diminuzione media del `r round(miglioramento_medio*100,0)` %
 
 ```{r}
-gp <- list(guide.label="Variazione 2003-2015", low="red3", high="green3")
+gp <- list(guide.label="Variazione 2003-2015", low="red3", high="green3",show_grid=FALSE)
 mapIT(delta_03_15, Regione, data=disoccupazione_no_na, graphPar = gp)
 ```
 
@@ -217,27 +222,138 @@ ds.laureati_regioni <- data.frame(do.call("rbind", laureati_regioni_grouped))
 ds.laureati_regioni$delta_03_15 <- disoccupazione_no_na[match(row.names(ds.laureati_regioni) ,disoccupazione_no_na$Regione),]$delta_03_15
 ```
 
-## PCA
+## Riduzione dimensionale
+
+Dividiamo il campione di laureati, raggruppato per ambito, in due macro ambiti (*Scientifico* ed *Umanistico*) così suddivisi:
+
+\begin{itemize}
+  \item Scientifico: Scientifico, Chimico-farmaceutico, Geo-biologico, Medico, Ingegneria, Architettura, Agrario, Economico-statistico, Educazione fisica, Difesa e sicurezza
+  \item Umanistico: Politico-sociale, Giuridico, Letterario, Linguistico, Insegnamento, Psicologico
+\end{itemize}
+
+## Riduzione dimensionale delle motivazioni di traferimento
+
+Procediamo ad analizzare le componenti principali delle colonne inerenti al punteggio che hanno dato i laureati alle diverse ragioni per cui migrerebbero in un altro Stato.
+
+```{r}
+ambiti_lauree <- c(
+  "Scientifico", "Chimico-farmaceutico", "Geo-biologico", "Medico", "Ingegneria", 
+  "Architettura", "Agrario", "Economico-statistico", "Politico-sociale", "Giuridico", 
+  "Letterario", "Linguistico", "Insegnamento", "Psicologico", "Educazione fisica",
+  "Difesa e sicurezza")
+
+ambiti_lauree_sh <- c("SC","CH","GEO","MED","ING",
+                      "ARCH","AGR","ECO","POL","GIU",
+                      "LET","LIN","INS","PSI","EDF",
+                      "SEC")
+
+macro_ambiti <- c("Scientifico", "Umanistico")
+
+macro_ambito <- function(id_ambito){
+  rel <- c(1,1,1,1,1,
+           1,1,1,2,2,
+           2,2,2,2,1,
+           1) 
+  return(macro_ambiti[rel[id_ambito]])
+}
+
+ambiti_grouped <- by(laureati,laureati$GRUPPO_mIcro ,function(x) 
+  data.frame(
+    id_ambito           = x$GRUPPO_mIcro[1],
+    ambito              = ambiti_lauree[x$GRUPPO_mIcro[1]],
+    macro_ambito        = macro_ambito(x$GRUPPO_mIcro[1]),
+    voto_medio          = mean(x$L1_22,na.rm = TRUE),
+    laureati            = length(x[,1]),
+    lascerebbero_italia = mean(x$L4_14,na.rm = TRUE),
+    occasioni_studio_formazione_scientifica	= mean(x$L4_17A,na.rm = TRUE),
+    precedenti_esperienze_studio_lavoro	= mean(x$L4_17B,na.rm = TRUE),
+    piu_opportunita_lavoro	= mean(x$L4_17C,na.rm = TRUE),
+    lavoro_maggiormente_qualificato	= mean(x$L4_17D,na.rm = TRUE),
+    lavoro_maggiormente_retribuito	= mean(x$L4_17E,na.rm = TRUE),
+    paese_avanguardia_settore_interesse	= mean(x$L4_17F,na.rm = TRUE),
+    accordi_paesi	= mean(x$L4_17G,na.rm = TRUE),
+    motivi_familiari_personali= mean(x$L4_17H,na.rm = TRUE)
+  )
+)
+df.laureati_ambiti <- na.omit(data.frame(do.call("rbind", ambiti_grouped)))
+
+#pairs(df.laureati_ambiti[,c(3:5)], col = df.laureati_ambiti$macro_ambito)
+
+#pc <- princomp(df.laureati_ambiti[,-(1:3)], cor = TRUE)
+#summary(pc)
+#round(cor(df.laureati_ambiti[,-(1:3)], pc$scores[, 1:5]), 2)
+
+pc <- princomp(df.laureati_ambiti[,7:13], cor = TRUE)
+summary(pc)
+```
+
+Constatiamo che con le prime tre componenti principali riusciamo a riassumere il 90% della varianza del campione e più del 75% con le prime due.
+
+```{r}
+round(cor(df.laureati_ambiti[,7:13], pc$scores[, 1:4]), 2)
+```
+
+La prima risulta essere fortemente correlata con la variabile "Lavoro maggiormente qualificato" (-0.98) e con "Più opportunità di lavoro" (-0.96).
+
+La seconda è dominata da "Occasioni di studio e formazione scientifica" (0.81).
+
+```{r}
+par(mfrow=c(1,2))
+
+plot(pc$scores[, 1:2], col = df.laureati_ambiti$macro_ambito)
+abline(h = 0, v = 0, col = "red", lty = "dashed")
+text(pc$scores[, 1:2], labels = ambiti_lauree_sh[df.laureati_ambiti$id_ambito], pos = 4, cex = 0.6)
+
+plot(pc$scores[, c(1,3)], col = df.laureati_ambiti$macro_ambito)
+abline(h = 0, v = 0, col = "red", lty = "dashed")
+text(pc$scores[, c(1,3)], labels = ambiti_lauree_sh[df.laureati_ambiti$id_ambito], pos = 4, cex = 0.6)
+
+#pairs(df.laureati_ambiti[,6:13], col = df.laureati_ambiti$macro_ambito)
+
+```
+
+L'ambito "Difesa e Sicurezza" risulta essere fortemente sbilanciato, motivo che ci spinge a riprovare una seconda analisi nella quale esso verrà escluso.
+
+```{r}
+df.laureati_ambiti_nosec <- df.laureati_ambiti[df.laureati_ambiti$id_ambito != 16,]
+pc <- princomp(df.laureati_ambiti_nosec[,7:13], cor = TRUE)
+#summary(pc)
+#round(cor(df.laureati_ambiti_nosec[,7:13], pc$scores[, 1:4]), 2)
+
+par(mfrow=c(1,2))
+
+plot(pc$scores[, 1:2], col = df.laureati_ambiti_nosec$macro_ambito)
+abline(h = 0, v = 0, col = "red", lty = "dashed")
+text(pc$scores[, 1:2], labels = ambiti_lauree_sh[df.laureati_ambiti_nosec$id_ambito], pos = 4, cex = 0.6)
+
+plot(pc$scores[, c(1,3)], col = df.laureati_ambiti_nosec$macro_ambito)
+abline(h = 0, v = 0, col = "red", lty = "dashed")
+text(pc$scores[, c(1,3)], labels = ambiti_lauree_sh[df.laureati_ambiti_nosec$id_ambito], pos = 4, cex = 0.6)
+```
+
+## Riduzione dimensionale 2
 
 ```{r}
 k <- na.omit(ds.laureati_regioni)
 #pairs(laureati[,c(11,32,84)]) # k
 
+#k <- k(ps[, 4:8], center = pc2$center, scale = pc2$scale)
+
 pc <- princomp(k,cor = TRUE)
 summary(pc)
 round(cor(k, pc$scores[, 1:4]), 2)
 
-plot(pc$scores[, 1:2],col = laureati$REG_UNI_mIcro)
+par(mfrow=c(1,2))
+
+plot(pc$scores[, 1:2],col = df.laureati_ambiti$macro_ambito)
+abline(h = 0, v = 0, col = "red", lty = "dashed")
+text(pc$scores[, 1:2], labels = ambiti_lauree_sh[df.laureati_ambiti$id_ambito], pos = 4, cex = 0.6)
+
+plot(pc$scores[, c(1,3)],col = df.laureati_ambiti$macro_ambito)
+abline(h = 0, v = 0, col = "red", lty = "dashed")
+text(pc$scores[, c(1,3)], labels = ambiti_lauree_sh[df.laureati_ambiti$id_ambito], pos = 4, cex = 0.6)
 
 k <- na.omit(laureati[,c(11,19,20,21,22,23,24,32,84,99,100,101,102,103,104,105,106,107,135,172,173,174,175,176,177,178)])
-
-#pairs(laureati[,c(11,32,84)]) # k
-#dev.copy(pdf, "pairs.pdf")
-#dev.off()
-
-pc <- princomp(k, cor = TRUE)
-summary(pc)
-round(cor(k, pc$scores[, 1:10]), 2)
 
 
 ```
@@ -268,13 +384,12 @@ round(cor(x,pc$scores[,1:6]),2)
 
 col <- europa$eu
 
-plot(pc$scores[,1:2], xlab="PC1 (38%)", ylab="PC2 (18%)", cex=0.7, col=col)
+plot(pc$scores[,1:2], xlab="PC1 (__%)", ylab="PC2 (__%)", cex=0.7, col=col)
 pairs(pc$scores[,1:5],col=col)
-
 ```
 
 # Conclusioni
 
 ## Considerazioni personali
 
-Non è stato semplice gestire la mole di dati analizzata, in particolare il dataset relativo ai laureati. La quantità di variabili, codificate tramite valori non intuitivi non ha semplificato d certo l'analisi.
+Non è stato semplice gestire la mole di dati analizzata, in particolare il dataset relativo ai laureati. La quantità di variabili, codificate tramite valori non intuitivi non ha semplificato l'analisi.
