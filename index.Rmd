@@ -208,10 +208,12 @@ mapIT(delta_03_15, Regione, data=disoccupazione_no_na, graphPar = gp)
 ```{r}
 laureati_regioni_grouped <- by(laureati,laureati$regione ,function(x) 
   data.frame(
-  voto_medio = mean(x$L1_22,na.rm = TRUE),
-  laureati=length(x[,1]),
-  pa=mean(x$L2_10 == 1,na.rm = TRUE),
-  lascerebbero_italia=mean(x$L4_14,na.rm = TRUE)
+    
+  voto_medio             = mean(x$L1_22,na.rm = TRUE),
+  laureati               = length(x[,1]),
+  pa                     = mean(x$L2_10 == 1,na.rm = TRUE),
+  lascerebbero_italia    = mean(x$L4_14,na.rm = TRUE),
+  mag.qual               = mean(x$L4_17D,na.rm = TRUE)
   )
 )
 
@@ -220,6 +222,7 @@ ds.laureati_regioni <- data.frame(do.call("rbind", laureati_regioni_grouped))
 #ds.laureati_regioni$regione <- row.names(ds.laureati_regioni)
 #rownames(ds.laureati_regioni) <- c()
 ds.laureati_regioni$delta_03_15 <- disoccupazione_no_na[match(row.names(ds.laureati_regioni) ,disoccupazione_no_na$Regione),]$delta_03_15
+ds.laureati_regioni$dis <- disoccupazione_no_na[match(row.names(ds.laureati_regioni) ,disoccupazione_no_na$Regione),]$DisPerc2015
 ```
 
 ## Riduzione dimensionale
@@ -356,6 +359,33 @@ text(pc$scores[, c(1,3)], labels = ambiti_lauree_sh[df.laureati_ambiti$id_ambito
 k <- na.omit(laureati[,c(11,19,20,21,22,23,24,32,84,99,100,101,102,103,104,105,106,107,135,172,173,174,175,176,177,178)])
 
 
+```
+
+## 3
+
+Avendo scoperto che la ricerca di lavoro maggiormente qualificato riassumeva molto bene tutte le ragioni per la quale un lareato sarebbe andato all'estero, utilizziamo quest'ultima per confrontarla con  
+
+...
+
+della regione
+
+
+```{r}
+
+df3 <- ds.laureati_regioni[,c(6,5)]
+
+plot(df3)
+
+d <- dist(scale(df3), method="euclidean")
+dendro_ave <- hclust(d, method="average")
+plot(dendro_ave, xlab="Unita’", ylab="Distanza Euclidea",
+main="Genitori e Figli", labels=FALSE, hang=-1, sub="Legame Medio")
+
+n_ps <- 20
+
+text(1:n_ps, rep(-0.1,n_ps), labels=rownames(ds.laureati_regioni)[dendro_ave$order], cex=0.7, las=3)
+
+dendro_ave$merge # crescita dell’albero dalle foglie verso la radice
 ```
 
 
